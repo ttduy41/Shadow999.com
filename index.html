@@ -3,223 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop Hoàng Vinh - Uy Tín Hàng Đầu</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>SHADOW SHOP - VIP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-color: #0d0d15;
-            --card-bg: #161625;
-            --primary: #bc13fe;
-            --secondary: #00f2ff;
-            --text: #ffffff;
-        }
+        :root { --primary: #00f2ff; --bg: #0b0f19; --card: #16213e; --text: #ffffff; --accent: #7b2cbf; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+        /* Sidebar & Header */
+        .header { background: var(--card); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--card); transition: 0.4s; z-index: 1000; padding: 20px; border-right: 1px solid var(--primary); }
+        .sidebar.active { left: 0; }
+        .menu-item { padding: 15px; cursor: pointer; border-bottom: 1px solid #2d334a; display: block; color: white; text-decoration: none; }
 
-        /* Menu Navigation */
-        nav {
-            background: var(--card-bg);
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--primary);
-        }
+        /* Auth UI (Xanh ngọc) */
+        .auth-container { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .auth-box { background: var(--card); padding: 30px; border-radius: 20px; border: 2px solid var(--primary); width: 320px; text-align: center; }
+        .input-cyan { width: 100%; padding: 12px; margin: 10px 0; background: transparent; border: 1px solid var(--primary); color: white; border-radius: 8px; }
+        .btn-cyan { width: 100%; padding: 12px; background: var(--primary); border: none; font-weight: bold; cursor: pointer; border-radius: 8px; }
 
-        .logo { font-weight: bold; color: var(--secondary); font-size: 1.2rem; }
-        
-        .user-info { display: flex; align-items: center; gap: 10px; }
-        .balance { color: #00ff00; font-weight: bold; }
+        /* Product Cards */
+        .container { padding: 15px; }
+        .card { background: var(--card); border-radius: 15px; margin-bottom: 20px; border: 1px solid #2d334a; overflow: hidden; }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .p-info { padding: 15px; }
 
-        /* Main Menu Buttons */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 20px;
-        }
-
-        .menu-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--primary);
-            padding: 15px;
-            text-align: center;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .menu-btn:hover { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
-
-        /* Admin Section - Only visible to admin */
-        #admin-panel {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px dashed red;
-            margin: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            display: none; /* Ẩn mặc định */
-        }
-
-        /* Product Grid */
-        .products {
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid #333;
-        }
-
-        .card img { width: 100%; height: 150px; object-fit: cover; }
-        .card-info { padding: 10px; text-align: center; }
-        .btn-buy {
-            background: var(--secondary);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        /* Popup Nạp Thẻ */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 15px;
-            z-index: 100;
-            width: 90%;
-            border: 2px solid var(--secondary);
-        }
+        /* Admin Section */
+        .admin-only { display: none; background: rgba(0, 242, 255, 0.1); border: 1px dashed var(--primary); padding: 10px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<nav>
-    <div class="logo">V-SHOP</div>
-    <div class="user-info">
-        <span id="user-name">Hoàng Vinh</span> | 
-        <span class="balance" id="user-balance">0đ</span>
-    </div>
-</nav>
-
-<div class="menu-grid">
-    <div class="menu-btn" onclick="showModal('napthe')"><i class="fa-solid fa-credit-card"></i><br>Nạp Thẻ</div>
-    <div class="menu-btn"><i class="fa-solid fa-history"></i><br>Lịch Sử</div>
-    <div class="menu-btn" id="admin-link" onclick="toggleAdmin()"><i class="fa-solid fa-user-shield"></i><br>Duyệt Thẻ</div>
-</div>
-
-<div id="admin-panel">
-    <h3><i class="fa-solid fa-lock"></i> Khu vực Admin</h3>
-    <p>Thẻ đang chờ duyệt:</p>
-    <div id="pending-cards">
-        </div>
-</div>
-
-<div class="products">
-    <div class="card">
-        <img src="1000182098.jpg" alt="Drip Silent">
-        <div class="card-info">
-            <h4>Drip Silent</h4>
-            <p>99.000đ</p>
-            <button class="btn-buy">MUA NGAY</button>
-        </div>
-    </div>
-    <div class="card">
-        <img src="1000182097.jpg" alt="Zygame">
-        <div class="card-info">
-            <h4>Zygame</h4>
-            <p>49.000đ</p>
-            <button class="btn-buy">MUA NGAY</button>
-        </div>
-    </div>
-    <div class="card">
-        <img src="1000182099.jpg" alt="Acc Clone LV5">
-        <div class="card-info">
-            <h4>Acc Clone LV5</h4>
-            <p>2.500đ</p>
-            <button class="btn-buy">MUA NGAY</button>
-        </div>
-    </div>
-</div>
-
-<div id="modal-napthe" class="modal">
-    <h3>Nạp Thẻ Cào</h3>
-    <select id="card-type" style="width:100%; padding:10px; margin-bottom:10px;">
-        <option>Viettel</option>
-        <option>Vinaphone</option>
-        <option>Mobifone</option>
-    </select>
-    <input type="text" id="card-seri" placeholder="Số Seri" style="width:95%; padding:10px; margin-bottom:10px;">
-    <input type="text" id="card-pin" placeholder="Mã Thẻ" style="width:95%; padding:10px; margin-bottom:10px;">
-    <button onclick="submitCard()" style="background:var(--primary); color:white; border:none; padding:10px; width:100%; border-radius:5px;">GỬI THẺ</button>
-    <button onclick="closeModal()" style="background:gray; border:none; margin-top:5px; padding:5px; width:100%; border-radius:5px;">Đóng</button>
-</div>
-
-<script>
-    let balance = 0;
-    let isAdmin = true; // Sửa thành false nếu là người dùng thường
-
-    // Hiển thị phần admin nếu là admin
-    if(isAdmin) {
-        document.getElementById('admin-link').style.display = 'block';
-    } else {
-        document.getElementById('admin-link').style.display = 'none';
-    }
-
-    function toggleAdmin() {
-        let panel = document.getElementById('admin-panel');
-        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function showModal(id) { document.getElementById('modal-'+id).style.display = 'block'; }
-    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-
-    // Gửi thẻ vào hàng chờ
-    function submitCard() {
-        let seri = document.getElementById('card-seri').value;
-        let pin = document.getElementById('card-pin').value;
-        let type = document.getElementById('card-type').value;
-
-        if(!seri || !pin) return alert("Vui lòng nhập đầy đủ!");
-
-        let pendingDiv = document.getElementById('pending-cards');
-        let cardHtml = `
-            <div style="background:#222; padding:10px; margin-top:5px; border-radius:5px;">
-                <b>${type}</b> - S: ${seri} - M: ${pin} <br>
-                <button onclick="approveCard(this, 20000)" style="color:lime">Duyệt (20k)</button>
-                <button onclick="this.parentElement.remove()" style="color:red">Hủy</button>
+    <div id="auth-ui" class="auth-container">
+        <div class="auth-box">
+            <h2 id="auth-title" style="color:var(--primary)">ĐĂNG NHẬP</h2>
+            <div id="reg-fields" style="display:none">
+                <input type="email" id="email" class="input-cyan" placeholder="Nhập Email">
             </div>
-        `;
-        pendingDiv.innerHTML += cardHtml;
-        alert("Thẻ đã gửi, vui lòng chờ Admin duyệt!");
-        closeModal();
-    }
+            <input type="text" id="user" class="input-cyan" placeholder="Tên tài khoản">
+            <input type="password" id="pass" class="input-cyan" placeholder="Mật khẩu">
+            <button class="btn-cyan" onclick="handleAuth()">XÁC NHẬN</button>
+            <p onclick="toggleAuth()" style="font-size:12px; cursor:pointer; margin-top:10px;">Chưa có tài khoản? Đăng ký</p>
+        </div>
+    </div>
 
-    // Admin duyệt cộng tiền
-    function approveCard(btn, amount) {
-        balance += amount;
-        document.getElementById('user-balance').innerText = balance.toLocaleString() + 'đ';
-        btn.parentElement.remove();
-        alert("Đã cộng " + amount + "đ vào tài khoản!");
-    }
-</script>
+    <div id="main-app" style="display:none">
+        <div class="header">
+            <i class="fas fa-bars" onclick="toggleSidebar()" style="font-size:24px; color:var(--primary)"></i>
+            <div style="font-weight:bold">SHADOW SHOP</div>
+            <div id="balance">0đ</div>
+        </div>
 
+        <div id="sidebar" class="sidebar">
+            <h3 style="color:var(--primary)">MENU</h3>
+            <a href="#" class="menu-item" onclick="showPage('home')">Trang Chủ</a>
+            <a href="#" class="menu-item" onclick="showPage('napthe')">Nạp Thẻ</a>
+            <a href="#" class="menu-item">Lịch sử giao dịch</a>
+            <a href="#" class="menu-item">Đơn hàng</a>
+            <div id="admin-menu" style="display:none">
+                <a href="#" class="menu-item" onclick="showPage('admin-panel')" style="color:var(--primary)">DUYỆT THẺ</a>
+                <a href="#" class="menu-item" style="color:var(--primary)">QUẢN LÝ KEY</a>
+            </div>
+            <a href="#" class="menu-item" onclick="logout()" style="color:red">Đăng xuất</a>
+        </div>
+
+        <div class="container" id="page-home">
+            <div class="card">
+                <img src="1000182098.jpg">
+                <div class="p-info">
+                    <h3>Drip Silent</h3>
+                    <p style="font-size:12px; color:#94a3b8">menu antiband updete thường xuyên lưu ý cách chơi khi muốn chơi thì log acc clone trước chơi 1 trận nếu không band thì có thể log acc 9 khi off nhớ đang xuất acc game</p>
+                    <button class="btn-cyan" onclick="buy('drip')">MUA NGAY</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="1000182097.jpg">
+                <div class="p-info">
+                    <h3>Zygame</h3>
+                    <p style="font-size:12px; color:#94a3b8">menu antiband updete thường xuyên lưu ý cách chơi khi muốn chơi thì log acc clone trước chơi 1 trận nếu không band thì có thể log acc 9 khi off nhớ đang xuất acc game</p>
+                    <button class="btn-cyan" onclick="buy('zy')">MUA NGAY</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <img src="1000182099.jpg">
+                <div class="p-info">
+                    <h3>Acc Clone LV5 Google</h3>
+                    <p style="font-size:12px; color:#94a3b8">Acc clone cấp 5 trắng thông tin, sẵn sàng để test menu.</p>
+                    <button class="btn-cyan" onclick="buy('lv5')">MUA - 2.500đ</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container" id="page-napthe" style="display:none">
+            <div class="auth-box" style="width:100%">
+                <h3 style="color:var(--primary)">NẠP THẺ CÀO (CHỜ DUYỆT)</h3>
+                <input type="text" id="seri" class="input-cyan" placeholder="Số Seri">
+                <input type="text" id="pin" class="input-cyan" placeholder="Mã Thẻ">
+                <button class="btn-cyan" onclick="requestNap()">GỬI THẺ</button>
+            </div>
+        </div>
+
+        <div class="container" id="page-admin" style="display:none">
+            <h3 style="color:var(--primary)">THẺ CHỜ DUYỆT</h3>
+            <div id="list-pending"></div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_ACC = { u: "shadow+999", p: "HV0308hv" };
+        let data = JSON.parse(localStorage.getItem('shadow_shop')) || { balance: 0, user: null, pending: [] };
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+        function toggleAuth() { 
+            const isReg = document.getElementById('reg-fields').style.display === 'block';
+            document.getElementById('reg-fields').style.display = isReg ? 'none' : 'block';
+            document.getElementById('auth-title').innerText = isReg ? 'ĐĂNG NHẬP' : 'ĐĂNG KÝ';
+        }
+
+        function handleAuth() {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            if (u === ADMIN_ACC.u && p === ADMIN_ACC.p) {
+                data.user = u; data.isAdmin = true;
+            } else {
+                data.user = u; data.isAdmin = false;
+            }
+            save(); login();
+        }
+
+        function login() {
+            document.getElementById('auth-ui').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('balance').innerText = data.balance.toLocaleString() + "đ";
+            if(data.isAdmin) document.getElementById('admin-menu').style.display = 'block';
+            showPage('home');
+        }
+
+        function showPage(page) {
+            document.getElementById('page-home').style.display = page === 'home' ? 'block' : 'none';
+            document.getElementById('page-napthe').style.display = page === 'napthe' ? 'block' : 'none';
+            document.getElementById('page-admin').style.display = page === 'admin-panel' ? 'block' : 'none';
+            if(page === 'admin-panel') renderPending();
+            toggleSidebar();
+        }
+
+        function requestNap() {
+            const s = document.getElementById('seri').value;
+            const p = document.getElementById('pin').value;
+            data.pending.push({ s, p, u: data.user });
+            alert("Đã gửi thẻ! Chờ Admin duyệt.");
+            save();
+        }
+
+        function renderPending() {
+            let html = '';
+            data.pending.forEach((item, index) => {
+                html += `<div class="card" style="padding:10px">User: ${item.u} | Seri: ${item.s} | Pin: ${item.p} 
+                        <button onclick="approve(${index})" class="btn-cyan" style="width:80px; padding:5px">Duyệt</button></div>`;
+            });
+            document.getElementById('list-pending').innerHTML = html;
+        }
+
+        function approve(index) {
+            data.balance += 50000; // Mặc định cộng 50k hoặc tùy bạn sửa
+            data.pending.splice(index, 1);
+            save(); renderPending();
+            document.getElementById('balance').innerText = data.balance.toLocaleString() + "đ";
+            alert("Đã duyệt tiền!");
+        }
+
+        function save() { localStorage.setItem('shadow_shop', JSON.stringify(data)); }
+        function logout() { localStorage.removeItem('shadow_shop'); location.reload(); }
+        if (data.user) login();
+    </script>
 </body>
 </html>
