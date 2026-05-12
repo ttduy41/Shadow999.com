@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Hoàng Vinh - Uy Tín Hàng Đầu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0d0d15;
+            --card-bg: #161625;
+            --primary: #bc13fe;
+            --secondary: #00f2ff;
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Menu Navigation */
+        nav {
+            background: var(--card-bg);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .logo { font-weight: bold; color: var(--secondary); font-size: 1.2rem; }
+        
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .balance { color: #00ff00; font-weight: bold; }
+
+        /* Main Menu Buttons */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .menu-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--primary);
+            padding: 15px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .menu-btn:hover { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+
+        /* Admin Section - Only visible to admin */
+        #admin-panel {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px dashed red;
+            margin: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none; /* Ẩn mặc định */
+        }
+
+        /* Product Grid */
+        .products {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .card img { width: 100%; height: 150px; object-fit: cover; }
+        .card-info { padding: 10px; text-align: center; }
+        .btn-buy {
+            background: var(--secondary);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Popup Nạp Thẻ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            z-index: 100;
+            width: 90%;
+            border: 2px solid var(--secondary);
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">V-SHOP</div>
+    <div class="user-info">
+        <span id="user-name">Hoàng Vinh</span> | 
+        <span class="balance" id="user-balance">0đ</span>
+    </div>
+</nav>
+
+<div class="menu-grid">
+    <div class="menu-btn" onclick="showModal('napthe')"><i class="fa-solid fa-credit-card"></i><br>Nạp Thẻ</div>
+    <div class="menu-btn"><i class="fa-solid fa-history"></i><br>Lịch Sử</div>
+    <div class="menu-btn" id="admin-link" onclick="toggleAdmin()"><i class="fa-solid fa-user-shield"></i><br>Duyệt Thẻ</div>
+</div>
+
+<div id="admin-panel">
+    <h3><i class="fa-solid fa-lock"></i> Khu vực Admin</h3>
+    <p>Thẻ đang chờ duyệt:</p>
+    <div id="pending-cards">
+        </div>
+</div>
+
+<div class="products">
+    <div class="card">
+        <img src="1000182098.jpg" alt="Drip Silent">
+        <div class="card-info">
+            <h4>Drip Silent</h4>
+            <p>99.000đ</p>
+            <button class="btn-buy">MUA NGAY</button>
+        </div>
+    </div>
+    <div class="card">
+        <img src="1000182097.jpg" alt="Zygame">
+        <div class="card-info">
+            <h4>Zygame</h4>
+            <p>49.000đ</p>
+            <button class="btn-buy">MUA NGAY</button>
+        </div>
+    </div>
+    <div class="card">
+        <img src="1000182099.jpg" alt="Acc Clone LV5">
+        <div class="card-info">
+            <h4>Acc Clone LV5</h4>
+            <p>2.500đ</p>
+            <button class="btn-buy">MUA NGAY</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-napthe" class="modal">
+    <h3>Nạp Thẻ Cào</h3>
+    <select id="card-type" style="width:100%; padding:10px; margin-bottom:10px;">
+        <option>Viettel</option>
+        <option>Vinaphone</option>
+        <option>Mobifone</option>
+    </select>
+    <input type="text" id="card-seri" placeholder="Số Seri" style="width:95%; padding:10px; margin-bottom:10px;">
+    <input type="text" id="card-pin" placeholder="Mã Thẻ" style="width:95%; padding:10px; margin-bottom:10px;">
+    <button onclick="submitCard()" style="background:var(--primary); color:white; border:none; padding:10px; width:100%; border-radius:5px;">GỬI THẺ</button>
+    <button onclick="closeModal()" style="background:gray; border:none; margin-top:5px; padding:5px; width:100%; border-radius:5px;">Đóng</button>
+</div>
+
+<script>
+    let balance = 0;
+    let isAdmin = true; // Sửa thành false nếu là người dùng thường
+
+    // Hiển thị phần admin nếu là admin
+    if(isAdmin) {
+        document.getElementById('admin-link').style.display = 'block';
+    } else {
+        document.getElementById('admin-link').style.display = 'none';
+    }
+
+    function toggleAdmin() {
+        let panel = document.getElementById('admin-panel');
+        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function showModal(id) { document.getElementById('modal-'+id).style.display = 'block'; }
+    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+
+    // Gửi thẻ vào hàng chờ
+    function submitCard() {
+        let seri = document.getElementById('card-seri').value;
+        let pin = document.getElementById('card-pin').value;
+        let type = document.getElementById('card-type').value;
+
+        if(!seri || !pin) return alert("Vui lòng nhập đầy đủ!");
+
+        let pendingDiv = document.getElementById('pending-cards');
+        let cardHtml = `
+            <div style="background:#222; padding:10px; margin-top:5px; border-radius:5px;">
+                <b>${type}</b> - S: ${seri} - M: ${pin} <br>
+                <button onclick="approveCard(this, 20000)" style="color:lime">Duyệt (20k)</button>
+                <button onclick="this.parentElement.remove()" style="color:red">Hủy</button>
+            </div>
+        `;
+        pendingDiv.innerHTML += cardHtml;
+        alert("Thẻ đã gửi, vui lòng chờ Admin duyệt!");
+        closeModal();
+    }
+
+    // Admin duyệt cộng tiền
+    function approveCard(btn, amount) {
+        balance += amount;
+        document.getElementById('user-balance').innerText = balance.toLocaleString() + 'đ';
+        btn.parentElement.remove();
+        alert("Đã cộng " + amount + "đ vào tài khoản!");
+    }
+</script>
+
+</body>
+</html>
